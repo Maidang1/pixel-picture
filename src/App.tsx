@@ -71,9 +71,26 @@ function App() {
                 const b = pixels[index + 2];
                 // 使用自定义权重计算灰度值
                 const grayscale = weights.r * r + weights.g * g + weights.b * b;
-                ctx.fillStyle = grayscale > 128 ? 'white' : 'black';
+                if (grayscale > 128) {
+                  const step = Math.floor((grayscale - 128) / 50);
+                  switch (step) {
+                    case 0:
+                      ctx.fillStyle = 'rgb(255, 0, 0)';
+                      break;
+                    case 1:
+                      ctx.fillStyle = 'rgb(0, 255, 0)';
+                      break;
+                    case 2:
+                      ctx.fillStyle = 'rgb(0, 0, 255)';
+                      break;
+                    default:
+                      ctx.fillStyle = 'rgb(255, 255, 255)';
+                  }
+                } else {
+                  ctx.fillStyle = 'black';
+                }
                 // 绘制像素点
-                ctx.fillRect(x, y, 2, 2);
+                ctx.fillRect(x, y, 3, 3);
               }
             }
           } finally {
