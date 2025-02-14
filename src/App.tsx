@@ -3,8 +3,7 @@ import './App.css'
 
 function App() {
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const [pixelSize] = useState(1); // 每个像素点的大小
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [weights, setWeights] = useState({
     r: 0.299,
@@ -39,35 +38,31 @@ function App() {
         img.src = e.target.result;
         img.onload = () => {
           try {
-            // 清空之前的内容
-            while (canvasRef.current?.firstChild) {
-              canvasRef.current.removeChild(canvasRef.current.firstChild);
-            }
+            const canvas = canvasRef.current;
+            const ctx = canvas?.getContext('2d');
+            if (!ctx || !canvas) return;
+
+            // 设置画布大小
+            canvas.width = img.width;
+            canvas.height = img.height;
 
             // 创建临时 canvas 来读取像素数据
             const tempCanvas = document.createElement('canvas');
             const tempCtx = tempCanvas.getContext('2d');
             if (!tempCtx) return;
 
-            // 设置临时画布大小
             tempCanvas.width = img.width;
             tempCanvas.height = img.height;
-
-            // 绘制图片到临时画布
             tempCtx.drawImage(img, 0, 0);
 
-            // 获取像素数据
             const imageData = tempCtx.getImageData(0, 0, img.width, img.height);
             const pixels = imageData.data;
 
-            // 设置容器样式
-            if (canvasRef.current) {
-              canvasRef.current.style.width = `${img.width}px`;
-              canvasRef.current.style.height = `${img.height}px`;
-              canvasRef.current.style.position = 'relative';
-            }
+            // 清空画布
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 创建像素点
+            // 绘制像素点
             for (let y = 0; y < img.height; y += 5) {
               for (let x = 0; x < img.width; x += 5) {
                 const index = (y * img.width + x) * 4;
@@ -76,17 +71,9 @@ function App() {
                 const b = pixels[index + 2];
                 // 使用自定义权重计算灰度值
                 const grayscale = weights.r * r + weights.g * g + weights.b * b;
-                const color = grayscale > 128 ? 'white' : 'black';
-
-                const pixel = document.createElement('div');
-                pixel.style.position = 'absolute';
-                pixel.style.left = `${x * pixelSize}px`;
-                pixel.style.top = `${y * pixelSize}px`;
-                pixel.style.width = `${pixelSize}px`;
-                pixel.style.height = `${pixelSize}px`;
-                pixel.style.backgroundColor = color;
-
-                canvasRef.current?.appendChild(pixel);
+                ctx.fillStyle = grayscale > 128 ? 'white' : 'black';
+                // 绘制像素点
+                ctx.fillRect(x, y, 2, 2);
               }
             }
           } finally {
@@ -97,7 +84,7 @@ function App() {
     };
 
     reader.readAsDataURL(imageFile);
-  }, [imageFile, pixelSize, weights]);
+  }, [imageFile, weights]);
 
   return (
     <div className="app-container">
@@ -143,7 +130,7 @@ function App() {
         />
       </div>
       {isLoading && <div className="loading">Processing image...</div>}
-      <div ref={canvasRef} className="pixel-canvas"></div>
+      <canvas ref={canvasRef} className="pixel-canvas"></canvas>
     </div>
   )
 }
