@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Upload, Download } from 'lucide-react'
+import { Download } from 'lucide-react'
 import { Switch } from "@/components/ui/switch"
 import ReactConfetti from 'react-confetti'
 import './App.css'
@@ -22,6 +22,8 @@ function App() {
     height: window.innerHeight,
   });
   const [canvasData, setCanvasData] = useState<string | null>(null);
+  const [pixelSize, setPixelSize] = useState(3);
+  const [sampleSize, setSampleSize] = useState(5);
 
   const handleWeightChange = (color: 'r' | 'g' | 'b', value: number[]) => {
     setWeights(prev => ({
@@ -76,8 +78,8 @@ function App() {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // 绘制像素点
-            for (let y = 0; y < img.height; y += 5) {
-              for (let x = 0; x < img.width; x += 5) {
+            for (let y = 0; y < img.height; y += sampleSize) {
+              for (let x = 0; x < img.width; x += sampleSize) {
                 const index = (y * img.width + x) * 4;
                 const r = pixels[index];
                 const g = pixels[index + 1];
@@ -107,7 +109,7 @@ function App() {
                 } else {
                   ctx.fillStyle = 'black';
                 }
-                ctx.fillRect(x, y, 3, 3);
+                ctx.fillRect(x, y, pixelSize, pixelSize);
               }
             }
 
@@ -121,7 +123,7 @@ function App() {
     };
 
     reader.readAsDataURL(imageFile);
-  }, [imageFile, weights, isColorMode]);
+  }, [imageFile, weights, isColorMode, pixelSize, sampleSize]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -285,7 +287,7 @@ function App() {
                 <div className="px-4 space-y-6 pb-[50px]">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label>R 通道权重</Label>
+                      <Label>R 通道权重 当前值: <span className='text-primary'>{weights.r.toFixed(3)}</span></Label>
                       <Slider
                         value={[weights.r]}
                         onValueChange={(value) => handleWeightChange('r', value)}
@@ -294,13 +296,10 @@ function App() {
                         step={0.001}
                         disabled={isLoading}
                       />
-                      <div className="text-sm text-muted-foreground">
-                        当前值: {weights.r.toFixed(3)}
-                      </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label>G 通道权重</Label>
+                      <Label>G 通道权重 当前值: <span className='text-primary'>{weights.g.toFixed(3)}</span></Label>
                       <Slider
                         value={[weights.g]}
                         onValueChange={(value) => handleWeightChange('g', value)}
@@ -309,13 +308,10 @@ function App() {
                         step={0.001}
                         disabled={isLoading}
                       />
-                      <div className="text-sm text-muted-foreground">
-                        当前值: {weights.g.toFixed(3)}
-                      </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label>B 通道权重</Label>
+                      <Label>B 通道权重 当前值: <span className='text-primary'>{weights.b.toFixed(3)}</span></Label>
                       <Slider
                         value={[weights.b]}
                         onValueChange={(value) => handleWeightChange('b', value)}
@@ -324,10 +320,31 @@ function App() {
                         step={0.001}
                         disabled={isLoading}
                       />
-                      <div className="text-sm text-muted-foreground">
-                        当前值: {weights.b.toFixed(3)}
-                      </div>
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>像素大小 当前值: <span className='text-primary'>{pixelSize}px</span></Label>
+                    <Slider
+                      value={[pixelSize]}
+                      onValueChange={(value) => setPixelSize(value[0])}
+                      min={1}
+                      max={10}
+                      step={1}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>采样间隔 当前值: <span className='text-primary'>{sampleSize}px</span></Label>
+                    <Slider
+                      value={[sampleSize]}
+                      onValueChange={(value) => setSampleSize(value[0])}
+                      min={1}
+                      max={10}
+                      step={1}
+                      disabled={isLoading}
+                    />
                   </div>
 
                   <div className="flex items-center justify-between">
