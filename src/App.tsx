@@ -2,7 +2,9 @@ import { useState, useRef, useEffect } from 'react'
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Upload, Download } from 'lucide-react'
+import { Switch } from "@/components/ui/switch"
 
 import './App.css'
 
@@ -10,6 +12,7 @@ function App() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isColorMode, setIsColorMode] = useState(false);
   const [weights, setWeights] = useState({
     r: 0.299,
     g: 0.587,
@@ -73,27 +76,32 @@ function App() {
                 const r = pixels[index];
                 const g = pixels[index + 1];
                 const b = pixels[index + 2];
-                // 使用自定义权重计算灰度值
                 const grayscale = weights.r * r + weights.g * g + weights.b * b;
+                
                 if (grayscale > 128) {
-                  const step = Math.floor((grayscale - 128) / 50);
-                  switch (step) {
-                    case 0:
-                      ctx.fillStyle = 'rgb(255, 0, 0)';
-                      break;
-                    case 1:
-                      ctx.fillStyle = 'rgb(0, 255, 0)';
-                      break;
-                    case 2:
-                      ctx.fillStyle = 'rgb(0, 0, 255)';
-                      break;
-                    default:
-                      ctx.fillStyle = 'rgb(255, 255, 255)';
+                  if (isColorMode) {
+                    // 彩色模式
+                    const step = Math.floor((grayscale - 128) / 50);
+                    switch (step) {
+                      case 0:
+                        ctx.fillStyle = 'rgb(255, 0, 0)';
+                        break;
+                      case 1:
+                        ctx.fillStyle = 'rgb(0, 255, 0)';
+                        break;
+                      case 2:
+                        ctx.fillStyle = 'rgb(0, 0, 255)';
+                        break;
+                      default:
+                        ctx.fillStyle = 'rgb(255, 255, 255)';
+                    }
+                  } else {
+                    // 黑白模式
+                    ctx.fillStyle = 'white';
                   }
                 } else {
                   ctx.fillStyle = 'black';
                 }
-                // 绘制像素点
                 ctx.fillRect(x, y, 3, 3);
               }
             }
@@ -105,7 +113,22 @@ function App() {
     };
 
     reader.readAsDataURL(imageFile);
-  }, [imageFile, weights]);
+  }, [imageFile, weights, isColorMode]);
+
+  const handleExportImage = () => {
+    const canvas = canvasRef.current;
+    if (!canvas || !imageFile) return;
+
+    // 创建临时链接
+    const link = document.createElement('a');
+    link.download = `pixel-${imageFile.name}`;
+    link.href = canvas.toDataURL('image/png');
+    
+    // 触发下载
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -161,7 +184,16 @@ function App() {
                 </div>
               </div>
             </div>
-            
+            <div className="flex items-center justify-between px-2">
+              <Label htmlFor="color-mode">彩色模式</Label>
+              <Switch
+                id="color-mode"
+                checked={isColorMode}
+                onCheckedChange={setIsColorMode}
+                disabled={isLoading}
+              />
+            </div>
+
             <div className="grid place-items-center">
               <Label
                 htmlFor="file-upload"
@@ -198,11 +230,25 @@ function App() {
 
         <Card>
           <CardContent className="p-4">
-            <div className="relative aspect-square w-full overflow-hidden rounded-lg border bg-background">
-              <canvas 
-                ref={canvasRef} 
-                className="absolute inset-0 w-full h-full object-contain"
-              />
+            <div className="space-y-4">
+              <div className="relative aspect-square w-full overflow-hidden rounded-lg border bg-background">
+                <canvas 
+                  ref={canvasRef} 
+                  className="absolute inset-0 w-full h-full object-contain"
+                />
+              </div>
+              
+              {imageFile && !isLoading && (
+                <div className="flex justify-center">
+                  <Button
+                    onClick={handleExportImage}
+                    className="flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    导出图片
+                  </Button>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
