@@ -77,7 +77,6 @@ function App() {
                 const g = pixels[index + 1];
                 const b = pixels[index + 2];
                 const grayscale = weights.r * r + weights.g * g + weights.b * b;
-                
                 if (grayscale > 128) {
                   if (isColorMode) {
                     // 彩色模式
@@ -153,7 +152,6 @@ function App() {
                   当前值: {weights.r.toFixed(3)}
                 </div>
               </div>
-              
               <div className="space-y-2">
                 <Label>G 通道权重</Label>
                 <Slider
@@ -168,7 +166,6 @@ function App() {
                   当前值: {weights.g.toFixed(3)}
                 </div>
               </div>
-              
               <div className="space-y-2">
                 <Label>B 通道权重</Label>
                 <Slider
@@ -237,7 +234,6 @@ function App() {
                   className="absolute inset-0 w-full h-full object-contain"
                 />
               </div>
-              
               {imageFile && !isLoading && (
                 <div className="flex justify-center">
                   <Button
