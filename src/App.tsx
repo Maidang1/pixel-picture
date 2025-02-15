@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Upload, Download } from 'lucide-react'
 import { Switch } from "@/components/ui/switch"
@@ -122,7 +122,7 @@ function App() {
     const link = document.createElement('a');
     link.download = `pixel-${imageFile.name}`;
     link.href = canvas.toDataURL('image/png');
-    
+
     // 触发下载
     document.body.appendChild(link);
     link.click();
@@ -130,107 +130,98 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8">
+      <span className='md:rounded-full bg-gradient-to-t md:bg-gradient-to-r from-sky-400 to-teal-300 opacity-40 aspect-square blur-3xl absolute -z-10 w-[150%] md:w-full bottom-[calc(100%-120px)] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0'></span>
       <div className="container max-w-2xl mx-auto space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>像素图片生成器</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>R 通道权重</Label>
-                <Slider
-                  value={[weights.r]}
-                  onValueChange={(value) => handleWeightChange('r', value)}
-                  min={0}
-                  max={1}
-                  step={0.001}
-                  disabled={isLoading}
-                />
-                <div className="text-sm text-muted-foreground">
-                  当前值: {weights.r.toFixed(3)}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>G 通道权重</Label>
-                <Slider
-                  value={[weights.g]}
-                  onValueChange={(value) => handleWeightChange('g', value)}
-                  min={0}
-                  max={1}
-                  step={0.001}
-                  disabled={isLoading}
-                />
-                <div className="text-sm text-muted-foreground">
-                  当前值: {weights.g.toFixed(3)}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>B 通道权重</Label>
-                <Slider
-                  value={[weights.b]}
-                  onValueChange={(value) => handleWeightChange('b', value)}
-                  min={0}
-                  max={1}
-                  step={0.001}
-                  disabled={isLoading}
-                />
-                <div className="text-sm text-muted-foreground">
-                  当前值: {weights.b.toFixed(3)}
-                </div>
-              </div>
+        <div>Pixel Picture</div>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>R 通道权重</Label>
+            <Slider
+              value={[weights.r]}
+              onValueChange={(value) => handleWeightChange('r', value)}
+              min={0}
+              max={1}
+              step={0.001}
+              disabled={isLoading}
+            />
+            <div className="text-sm text-muted-foreground">
+              当前值: {weights.r.toFixed(3)}
             </div>
-            <div className="flex items-center justify-between px-2">
-              <Label htmlFor="color-mode">彩色模式</Label>
-              <Switch
-                id="color-mode"
-                checked={isColorMode}
-                onCheckedChange={setIsColorMode}
-                disabled={isLoading}
-              />
+          </div>
+          <div className="space-y-2">
+            <Label>G 通道权重</Label>
+            <Slider
+              value={[weights.g]}
+              onValueChange={(value) => handleWeightChange('g', value)}
+              min={0}
+              max={1}
+              step={0.001}
+              disabled={isLoading}
+            />
+            <div className="text-sm text-muted-foreground">
+              当前值: {weights.g.toFixed(3)}
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label>B 通道权重</Label>
+            <Slider
+              value={[weights.b]}
+              onValueChange={(value) => handleWeightChange('b', value)}
+              min={0}
+              max={1}
+              step={0.001}
+              disabled={isLoading}
+            />
+            <div className="text-sm text-muted-foreground">
+              当前值: {weights.b.toFixed(3)}
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between px-2">
+          <Label htmlFor="color-mode">彩色模式</Label>
+          <Switch
+            id="color-mode"
+            checked={isColorMode}
+            onCheckedChange={setIsColorMode}
+            disabled={isLoading}
+          />
+        </div>
 
-            <div className="grid place-items-center">
-              <Label
-                htmlFor="file-upload"
-                className="cursor-pointer w-full max-w-[300px]"
-              >
-                <div className="flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors">
-                  <Upload className="w-8 h-8 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    {imageFile ? imageFile.name : '点击选择图片'}
-                  </span>
-                </div>
-                <input
-                  id="file-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  disabled={isLoading}
-                />
-              </Label>
+        <div className="grid place-items-center">
+          <Label
+            htmlFor="file-upload"
+            className="cursor-pointer w-full max-w-[300px]"
+          >
+            <div className="flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors">
+              <Upload className="w-8 h-8 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">
+                {imageFile ? imageFile.name : '点击选择图片'}
+              </span>
             </div>
-          </CardContent>
-        </Card>
+            <input
+              id="file-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+              disabled={isLoading}
+            />
+          </Label>
+        </div>
 
         {isLoading && (
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-center text-muted-foreground">
-                处理中...
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex items-center justify-center text-muted-foreground">
+            处理中...
+          </div>
         )}
 
         <Card>
           <CardContent className="p-4">
             <div className="space-y-4">
               <div className="relative aspect-square w-full overflow-hidden rounded-lg border bg-background">
-                <canvas 
-                  ref={canvasRef} 
+                <canvas
+                  ref={canvasRef}
                   className="absolute inset-0 w-full h-full object-contain"
                 />
               </div>

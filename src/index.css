@@ -66,3 +66,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+@font-face {
+  font-family: 'Pixel';
+  src: url('./assets/font.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+#root {
+  font-family: 'Pixel', sans-serif;
+}
