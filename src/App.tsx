@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { Slider } from "@/components/ui/slider"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Upload } from 'lucide-react'
 
 import './App.css'
 
@@ -13,11 +16,10 @@ function App() {
     b: 0.114
   });
 
-  const handleWeightChange = (color: 'r' | 'g' | 'b', value: string) => {
-    const numValue = parseFloat(value) || 0;
+  const handleWeightChange = (color: 'r' | 'g' | 'b', value: number[]) => {
     setWeights(prev => ({
       ...prev,
-      [color]: numValue
+      [color]: value[0]
     }));
   };
 
@@ -106,57 +108,105 @@ function App() {
   }, [imageFile, weights]);
 
   return (
-    <div className="app-container">
-      <Button>Click me</Button>
-      <div className="controls">
-        <div className="weight-inputs">
-          <label>
-            R权重:
-            <input
-              type="number"
-              step="0.001"
-              value={weights.r}
-              onChange={(e) => handleWeightChange('r', e.target.value)}
-              disabled={isLoading}
-            />
-          </label>
-          <label>
-            G权重:
-            <input
-              type="number"
-              step="0.001"
-              value={weights.g}
-              onChange={(e) => handleWeightChange('g', e.target.value)}
-              disabled={isLoading}
-            />
-          </label>
-          <label>
-            B权重:
-            <input
-              type="number"
-              step="0.001"
-              value={weights.b}
-              onChange={(e) => handleWeightChange('b', e.target.value)}
-              disabled={isLoading}
-            />
-          </label>
-        </div>
-        <div className="file-input-wrapper">
-          <label htmlFor="file-upload" className="file-input-label">
-            选择图片
-            <input
-              id="file-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="file-input"
-              disabled={isLoading}
-            />
-          </label>
-        </div>
+    <div className="min-h-screen bg-background p-4 md:p-8">
+      <div className="container max-w-2xl mx-auto space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>像素图片生成器</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>R 通道权重</Label>
+                <Slider
+                  value={[weights.r]}
+                  onValueChange={(value) => handleWeightChange('r', value)}
+                  min={0}
+                  max={1}
+                  step={0.001}
+                  disabled={isLoading}
+                />
+                <div className="text-sm text-muted-foreground">
+                  当前值: {weights.r.toFixed(3)}
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>G 通道权重</Label>
+                <Slider
+                  value={[weights.g]}
+                  onValueChange={(value) => handleWeightChange('g', value)}
+                  min={0}
+                  max={1}
+                  step={0.001}
+                  disabled={isLoading}
+                />
+                <div className="text-sm text-muted-foreground">
+                  当前值: {weights.g.toFixed(3)}
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>B 通道权重</Label>
+                <Slider
+                  value={[weights.b]}
+                  onValueChange={(value) => handleWeightChange('b', value)}
+                  min={0}
+                  max={1}
+                  step={0.001}
+                  disabled={isLoading}
+                />
+                <div className="text-sm text-muted-foreground">
+                  当前值: {weights.b.toFixed(3)}
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid place-items-center">
+              <Label
+                htmlFor="file-upload"
+                className="cursor-pointer w-full max-w-[300px]"
+              >
+                <div className="flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors">
+                  <Upload className="w-8 h-8 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    {imageFile ? imageFile.name : '点击选择图片'}
+                  </span>
+                </div>
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={isLoading}
+                />
+              </Label>
+            </div>
+          </CardContent>
+        </Card>
+
+        {isLoading && (
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-center text-muted-foreground">
+                处理中...
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative aspect-square w-full overflow-hidden rounded-lg border bg-background">
+              <canvas 
+                ref={canvasRef} 
+                className="absolute inset-0 w-full h-full object-contain"
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
-      {isLoading && <div className="loading">Processing image...</div>}
-      <canvas ref={canvasRef} className="pixel-canvas"></canvas>
     </div>
   )
 }
