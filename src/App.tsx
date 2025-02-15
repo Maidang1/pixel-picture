@@ -138,13 +138,19 @@ function App() {
             />
           </label>
         </div>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className="file-input"
-          disabled={isLoading}
-        />
+        <div className="file-input-wrapper">
+          <label htmlFor="file-upload" className="file-input-label">
+            选择图片
+            <input
+              id="file-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="file-input"
+              disabled={isLoading}
+            />
+          </label>
+        </div>
       </div>
       {isLoading && <div className="loading">Processing image...</div>}
       <canvas ref={canvasRef} className="pixel-canvas"></canvas>
