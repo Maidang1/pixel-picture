@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
+import { Button } from "@/components/ui/button"
+
 import './App.css'
 
 function App() {
@@ -105,6 +107,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <Button>Click me</Button>
       <div className="controls">
         <div className="weight-inputs">
           <label>
