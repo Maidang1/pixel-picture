@@ -1,11 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Upload, Download } from 'lucide-react'
+import { Upload } from 'lucide-react'
 import { Switch } from "@/components/ui/switch"
-
 import './App.css'
 
 function App() {
@@ -28,9 +25,11 @@ function App() {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    console.log("file", file)
     if (file) {
       setImageFile(file);
-      setIsLoading(true);
+      setIsLoading(false);
+      console.log("file", file)
     }
   };
 
@@ -114,133 +113,161 @@ function App() {
     reader.readAsDataURL(imageFile);
   }, [imageFile, weights, isColorMode]);
 
-  const handleExportImage = () => {
-    const canvas = canvasRef.current;
-    if (!canvas || !imageFile) return;
+  // const handleExportImage = () => {
+  //   const canvas = canvasRef.current;
+  //   if (!canvas || !imageFile) return;
 
-    // 创建临时链接
-    const link = document.createElement('a');
-    link.download = `pixel-${imageFile.name}`;
-    link.href = canvas.toDataURL('image/png');
+  //   // 创建临时链接
+  //   const link = document.createElement('a');
+  //   link.download = `pixel-${imageFile.name}`;
+  //   link.href = canvas.toDataURL('image/png');
 
-    // 触发下载
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  //   // 触发下载
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+
+  const handleReset = () => {
+    setImageFile(null);
+    setIsLoading(false);
+    setIsColorMode(false);
+    setWeights({
+      r: 0.299,
+      g: 0.587,
+      b: 0.114
+    });
+  }
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
-      <span className='md:rounded-full bg-gradient-to-t md:bg-gradient-to-r from-sky-400 to-teal-300 opacity-40 aspect-square blur-3xl absolute -z-10 w-[150%] md:w-full bottom-[calc(100%-120px)] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0'></span>
-      <div className="container max-w-2xl mx-auto space-y-6">
-        <div>Pixel Picture</div>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>R 通道权重</Label>
-            <Slider
-              value={[weights.r]}
-              onValueChange={(value) => handleWeightChange('r', value)}
-              min={0}
-              max={1}
-              step={0.001}
-              disabled={isLoading}
-            />
-            <div className="text-sm text-muted-foreground">
-              当前值: {weights.r.toFixed(3)}
-            </div>
+    <div className='flex flex-col h-full w-full max-w-full max-h-full box-border relative overflow-hidden justify-between'>
+      <div className="p-4 md:p-8 overflow-auto w-full max-w-full h-full max-h-full box-border relative">
+        <span className='md:rounded-full bg-gradient-to-t md:bg-gradient-to-r from-sky-400 to-teal-300 opacity-40 aspect-square blur-3xl absolute -z-10 w-[100%] md:w-full bottom-[calc(100%-120px)] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0'></span>
+        <div className="container max-w-2xl mx-auto space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="text-l font-bold">Pixel Picture</div>
           </div>
-          <div className="space-y-2">
-            <Label>G 通道权重</Label>
-            <Slider
-              value={[weights.g]}
-              onValueChange={(value) => handleWeightChange('g', value)}
-              min={0}
-              max={1}
-              step={0.001}
-              disabled={isLoading}
-            />
-            <div className="text-sm text-muted-foreground">
-              当前值: {weights.g.toFixed(3)}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label>B 通道权重</Label>
-            <Slider
-              value={[weights.b]}
-              onValueChange={(value) => handleWeightChange('b', value)}
-              min={0}
-              max={1}
-              step={0.001}
-              disabled={isLoading}
-            />
-            <div className="text-sm text-muted-foreground">
-              当前值: {weights.b.toFixed(3)}
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center justify-between px-2">
-          <Label htmlFor="color-mode">彩色模式</Label>
-          <Switch
-            id="color-mode"
-            checked={isColorMode}
-            onCheckedChange={setIsColorMode}
-            disabled={isLoading}
-          />
-        </div>
 
-        <div className="grid place-items-center">
-          <Label
-            htmlFor="file-upload"
-            className="cursor-pointer w-full max-w-[300px]"
-          >
-            <div className="flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors">
-              <Upload className="w-8 h-8 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">
-                {imageFile ? imageFile.name : '点击选择图片'}
-              </span>
-            </div>
-            <input
-              id="file-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-              disabled={isLoading}
-            />
-          </Label>
-        </div>
-
-        {isLoading && (
-          <div className="flex items-center justify-center text-muted-foreground">
-            处理中...
-          </div>
-        )}
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="space-y-4">
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg border bg-background">
-                <canvas
-                  ref={canvasRef}
-                  className="absolute inset-0 w-full h-full object-contain"
-                />
-              </div>
-              {imageFile && !isLoading && (
-                <div className="flex justify-center">
-                  <Button
-                    onClick={handleExportImage}
-                    className="flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    导出图片
-                  </Button>
+          {
+            !imageFile && <div className="grid place-items-center">
+              <Label
+                htmlFor="file-upload"
+                className="cursor-pointer w-full max-w-[300px]"
+              >
+                <div className="flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors">
+                  <Upload className="w-8 h-8 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    点击选择图片
+                  </span>
                 </div>
-              )}
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={isLoading}
+                  aria-label="Upload image"
+                />
+              </Label>
             </div>
-          </CardContent>
-        </Card>
+          }
+
+
+          {isLoading && (
+            <div className="flex items-center justify-center text-muted-foreground">
+              处理中...
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {imageFile && !isLoading && (
+              <>
+                <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+                  <canvas
+                    ref={canvasRef}
+                    className="absolute inset-0 w-full h-full object-contain"
+                  />
+                </div>
+                {/* <div className="flex justify-center">
+                <Button
+                  onClick={handleExportImage}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  导出图片
+                </Button>
+              </div> */}
+                <div className="px-4 space-y-6 pb-[50px]">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>R 通道权重</Label>
+                      <Slider
+                        value={[weights.r]}
+                        onValueChange={(value) => handleWeightChange('r', value)}
+                        min={0}
+                        max={1}
+                        step={0.001}
+                        disabled={isLoading}
+                      />
+                      <div className="text-sm text-muted-foreground">
+                        当前值: {weights.r.toFixed(3)}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>G 通道权重</Label>
+                      <Slider
+                        value={[weights.g]}
+                        onValueChange={(value) => handleWeightChange('g', value)}
+                        min={0}
+                        max={1}
+                        step={0.001}
+                        disabled={isLoading}
+                      />
+                      <div className="text-sm text-muted-foreground">
+                        当前值: {weights.g.toFixed(3)}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>B 通道权重</Label>
+                      <Slider
+                        value={[weights.b]}
+                        onValueChange={(value) => handleWeightChange('b', value)}
+                        min={0}
+                        max={1}
+                        step={0.001}
+                        disabled={isLoading}
+                      />
+                      <div className="text-sm text-muted-foreground">
+                        当前值: {weights.b.toFixed(3)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="color-mode">彩色模式</Label>
+                    <Switch
+                      id="color-mode"
+                      checked={isColorMode}
+                      onCheckedChange={setIsColorMode}
+                      disabled={isLoading}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div >
+      <div className='flex justify-between gap-2 px-4 md:px-0 py-2 mt-2 border-t border-gray-400/20'>
+        <button className='button button-ghost danger' onClick={handleReset}>重置</button>
+        <button className='button button-ghost'>完成</button>
       </div>
     </div>
+
+
   )
 }
 

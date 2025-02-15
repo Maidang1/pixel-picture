@@ -1,3 +1,11 @@
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
 
 .card {
   padding: 2em;
@@ -104,25 +112,21 @@ input:disabled {
 
 /* 移动端适配 */
 @media screen and (max-width: 480px) {
-  #root {
-    padding: 0.5rem;
-  }
-  
   .controls {
     padding: 0.8rem;
   }
-  
+
   .weight-inputs label {
     font-size: 0.8rem;
     padding: 0.4rem;
   }
-  
+
   .weight-inputs input {
     width: 100px;
     padding: 0.4rem;
     font-size: 0.8rem;
   }
-  
+
   .file-input-label {
     padding: 0.6rem 0.8rem;
     font-size: 0.8rem;
