@@ -230,6 +230,11 @@ function App() {
               保存图片
             </button>
           </div>
+          <div className='py-4 md:px-1 px-4 text-xs text-center text-black/30'>
+            <div className='text-center'>灵感来源于许嵩的《摄影艺术》的歌词</div>
+            <div className='text-center text-primary'>”数码时代用千万像素，制造出当我把你放大到底后，只剩马赛克的失意“</div>
+            <div className='text-center'>网站设计灵感来源于：<a href='https://poem.mayday.land' target='_blank' rel='noopener' className='text-primary underline'>Mayday 拼贴诗</a></div>
+          </div>
         </div>
       </div>
     );
