@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Upload } from 'lucide-react'
+import { Upload, Download } from 'lucide-react'
 import { Switch } from "@/components/ui/switch"
+import ReactConfetti from 'react-confetti'
 import './App.css'
 
 function App() {
@@ -14,6 +15,11 @@ function App() {
     r: 0.299,
     g: 0.587,
     b: 0.114
+  });
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
   });
 
   const handleWeightChange = (color: 'r' | 'g' | 'b', value: number[]) => {
@@ -113,20 +119,33 @@ function App() {
     reader.readAsDataURL(imageFile);
   }, [imageFile, weights, isColorMode]);
 
-  // const handleExportImage = () => {
-  //   const canvas = canvasRef.current;
-  //   if (!canvas || !imageFile) return;
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
 
-  //   // 创建临时链接
-  //   const link = document.createElement('a');
-  //   link.download = `pixel-${imageFile.name}`;
-  //   link.href = canvas.toDataURL('image/png');
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  //   // 触发下载
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // };
+  const handleExportImage = () => {
+    const canvas = canvasRef.current;
+    if (!canvas || !imageFile) return;
+
+    const link = document.createElement('a');
+    link.download = `pixel-${imageFile.name}`;
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleComplete = () => {
+    setIsCompleted(true);
+  };
 
   const handleReset = () => {
     setImageFile(null);
@@ -137,6 +156,51 @@ function App() {
       g: 0.587,
       b: 0.114
     });
+  }
+
+  if (isCompleted && imageFile) {
+    return (
+      <div className="min-h-screen p-4 md:p-8 relative">
+        <ReactConfetti
+          width={windowSize.width}
+          height={windowSize.height}
+          recycle={false}
+          numberOfPieces={200}
+          gravity={0.2}
+        />
+        <div className="container max-w-2xl mx-auto space-y-6">
+          <div className="text-center space-y-4">
+            <h1 className="text-2xl font-bold">🎉 完成啦！</h1>
+            <p className="text-muted-foreground">
+              你的像素艺术已经准备就绪
+            </p>
+          </div>
+
+          <div className="relative aspect-square w-full overflow-hidden rounded-lg border bg-background">
+            <canvas
+              ref={canvasRef}
+              className="absolute inset-0 w-full h-full object-contain"
+            />
+          </div>
+
+          <div className="flex justify-center gap-4">
+            <button
+              className="button button-ghost"
+              onClick={handleReset}
+            >
+              重新开始
+            </button>
+            <button
+              className="button button-primary flex items-center gap-2"
+              onClick={handleExportImage}
+            >
+              <Download className="w-4 h-4" />
+              保存图片
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -189,15 +253,6 @@ function App() {
                     className="absolute inset-0 w-full h-full object-contain"
                   />
                 </div>
-                {/* <div className="flex justify-center">
-                <Button
-                  onClick={handleExportImage}
-                  className="flex items-center gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  导出图片
-                </Button>
-              </div> */}
                 <div className="px-4 space-y-6 pb-[50px]">
                   <div className="space-y-4">
                     <div className="space-y-2">
@@ -263,7 +318,13 @@ function App() {
       </div >
       <div className='flex justify-between gap-2 px-4 md:px-0 py-2 mt-2 border-t border-gray-400/20'>
         <button className='button button-ghost danger' onClick={handleReset}>重置</button>
-        <button className='button button-ghost'>完成</button>
+        <button 
+          className='button button-ghost'
+          onClick={handleComplete}
+          disabled={!imageFile || isLoading}
+        >
+          完成
+        </button>
       </div>
     </div>
 
