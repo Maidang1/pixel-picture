@@ -100,6 +100,6 @@
 }
 
 .button.button-ghost {
-  border-width: 1px;
-  border-color: #9ca3af80;
+  border-width: 1px !important;
+  border-color: #9ca3af80 !important;
 }

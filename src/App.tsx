@@ -21,6 +21,7 @@ function App() {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [canvasData, setCanvasData] = useState<string | null>(null);
 
   const handleWeightChange = (color: 'r' | 'g' | 'b', value: number[]) => {
     setWeights(prev => ({
@@ -109,6 +110,9 @@ function App() {
                 ctx.fillRect(x, y, 3, 3);
               }
             }
+
+            // 在完成渲染后保存 canvas 数据
+            setCanvasData(canvas.toDataURL('image/png'));
           } finally {
             setIsLoading(false);
           }
@@ -131,6 +135,25 @@ function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    if (isCompleted && canvasRef.current && canvasData) {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = canvasRef.current;
+        const ctx = canvas?.getContext('2d');
+        if (!ctx || !canvas) return;
+
+        // 设置 canvas 尺寸
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // 绘制保存的图像
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = canvasData;
+    }
+  }, [isCompleted, canvasData]);
+
   const handleExportImage = () => {
     const canvas = canvasRef.current;
     if (!canvas || !imageFile) return;
@@ -144,6 +167,10 @@ function App() {
   };
 
   const handleComplete = () => {
+    if (canvasRef.current) {
+      // 确保在切换到完成界面前保存当前 canvas 数据
+      setCanvasData(canvasRef.current.toDataURL('image/png'));
+    }
     setIsCompleted(true);
   };
 
@@ -176,7 +203,7 @@ function App() {
             </p>
           </div>
 
-          <div className="relative aspect-square w-full overflow-hidden rounded-lg border bg-background">
+          <div className="relative aspect-square w-full overflow-hidden rounded-lg">
             <canvas
               ref={canvasRef}
               className="absolute inset-0 w-full h-full object-contain"
@@ -186,7 +213,10 @@ function App() {
           <div className="flex justify-center gap-4">
             <button
               className="button button-ghost"
-              onClick={handleReset}
+              onClick={() => {
+                setIsCompleted(false);
+                handleReset();
+              }}
             >
               重新开始
             </button>
@@ -219,7 +249,6 @@ function App() {
                 className="cursor-pointer w-full max-w-[300px]"
               >
                 <div className="flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors">
-                  <Upload className="w-8 h-8 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">
                     点击选择图片
                   </span>
@@ -318,8 +347,8 @@ function App() {
       </div >
       <div className='flex justify-between gap-2 px-4 md:px-0 py-2 mt-2 border-t border-gray-400/20'>
         <button className='button button-ghost danger' onClick={handleReset}>重置</button>
-        <button 
-          className='button button-ghost'
+        <button
+          className='button button-ghost border-[#9ca3af80]'
           onClick={handleComplete}
           disabled={!imageFile || isLoading}
         >
