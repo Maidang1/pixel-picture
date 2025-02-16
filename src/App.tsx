@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Download } from 'lucide-react'
+import { Download,ChevronLeft } from 'lucide-react'
 import { Switch } from "@/components/ui/switch"
 import { GridPattern } from "@/components/magicui/grid-pattern"
 import { ShinyButton } from "@/components/magicui/shiny-button"
+import { RippleButton } from "@/components/magicui/ripple-button"
 import ReactConfetti from 'react-confetti'
 import { cn } from "@/lib/utils";
 
@@ -239,16 +240,17 @@ function App() {
 
             <div className="flex justify-center gap-4">
               <button
-                className="button button-ghost"
+                className="btn btn-normal flex items-center gap-2"
                 onClick={() => {
                   setIsCompleted(false);
                   handleReset();
                 }}
               >
-                重新开始
+                <ChevronLeft className="w-4 h-4" />
+                返回
               </button>
               <button
-                className="button button-primary flex items-center gap-2"
+                className="btn btn-normal flex items-center gap-2"
                 onClick={handleExportImage}
               >
                 <Download className="w-4 h-4" />
@@ -270,21 +272,31 @@ function App() {
     <GridBackground>
       <div className='flex flex-col h-full w-full max-w-full max-h-full box-border relative overflow-hidden justify-between'>
         <div className="p-4 md:p-8 overflow-auto w-full max-w-full h-full max-h-full box-border relative">
-          <span className='md:rounded-full bg-gradient-to-t md:bg-gradient-to-r from-sky-400 to-teal-100 opacity-40 aspect-square blur-3xl absolute -z-10 w-[100%] md:w-full bottom-[calc(100%-200px)] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0'></span>
+          {/* <span className='md:rounded-full bg-gradient-to-t md:bg-gradient-to-r from-sky-400 to-teal-100 opacity-40 aspect-square blur-3xl absolute -z-10 w-[100%] md:w-full bottom-[calc(85%-200px)] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0'></span> */}
           <div className="container max-w-2xl mx-auto space-y-6 h-full">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between flex-col flex-start items-start">
               <div className="text-2xl font-bold">Pixel Picture</div>
+              <div className='text-l'>Transform your image into <span className='text-primary font-bold'>pixel art</span></div>
             </div>
 
+            {/* 上传图片控件 */}
             {
-              !imageFile && <div className="flex flex-col items-center justify-center h-full">
+              !imageFile && <div className="flex flex-col items-center justify-end h-full box-border overflow-auto pb-[70px]">
                 <Label
                   htmlFor="file-upload"
                   className="cursor-pointer w-full max-w-[300px]"
                 >
-                  <div className="flex flex-col h-full items-center gap-2 p-6  rounded-lg hover:border-primary transition-colors">
-                    <ShinyButton className="text-sm text-muted-foreground">
-                      点击选择图片
+                  <div className="flex flex-col h-full items-end gap-2 p-6 rounded-lg hover:border-primary transition-colors">
+                    <ShinyButton
+                      className='!w-full bg-white'
+                      onClick={() => {
+                        const input = document.getElementById('file-upload') as HTMLInputElement;
+                        input?.click();
+                      }}
+                    >
+                      <div className='flex items-center justify-center'>
+                        <span className='text-sm text-primary'>点击选择图片</span>
+                      </div>
                     </ShinyButton>
                   </div>
                   <input
@@ -395,14 +407,14 @@ function App() {
           </div>
         </div >
         <div className='flex justify-between gap-2 px-4 md:px-0 py-2 mt-2 border-t border-gray-400/20'>
-          <button className='button button-ghost danger' onClick={handleReset}>重置</button>
-          <button
-            className='button button-ghost border-[#9ca3af80]'
+          <RippleButton className='btn btn-ghost danger' onClick={handleReset}>重置</RippleButton>
+          <RippleButton
+            className='btn btn-ghost border-[#9ca3af80]'
             onClick={handleComplete}
             disabled={!imageFile || isLoading}
           >
             完成
-          </button>
+          </RippleButton>
         </div>
       </div>
     </GridBackground>

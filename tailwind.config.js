@@ -53,6 +53,20 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
+  		},
+  		animation: {
+  			rippling: 'rippling var(--duration) ease-out'
+  		},
+  		keyframes: {
+  			rippling: {
+  				'0%': {
+  					opacity: '1'
+  				},
+  				'100%': {
+  					transform: 'scale(2)',
+  					opacity: '0'
+  				}
+  			}
   		}
   	}
   },
