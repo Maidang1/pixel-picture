@@ -1,13 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Download,ChevronLeft } from 'lucide-react'
+import { Download, ChevronLeft } from 'lucide-react'
 import { Switch } from "@/components/ui/switch"
 import { GridPattern } from "@/components/magicui/grid-pattern"
 import { ShinyButton } from "@/components/magicui/shiny-button"
 import { RippleButton } from "@/components/magicui/ripple-button"
+import { Marquee } from "@/components/magicui/marquee";
 import ReactConfetti from 'react-confetti'
 import { cn } from "@/lib/utils";
+
+
+import one from './assets/pixel-image/one.jpeg'
+import two from './assets/pixel-image/two.jpeg'
+import three from './assets/pixel-image/three.jpeg'
+import four from './assets/pixel-image/four.jpeg'
 
 import './App.css'
 
@@ -25,6 +32,29 @@ export function GridBackground(props: { children: React.ReactNode }) {
         )}
       />
       {props.children}
+    </div>
+  );
+}
+
+
+
+const imagePath = [
+  one,
+  two,
+  three,
+  four,
+]
+
+export function MarqueeList() {
+  return (
+    <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+      <Marquee pauseOnHover className="[--duration:20s]">
+        {imagePath.map((item, index) => (
+          <div key={index} className="w-full h-full">
+            <img src={item} alt="pixel art" className="w-[250px] h-auto object-cover" />
+          </div>
+        ))}
+      </Marquee>
     </div>
   );
 }
@@ -280,8 +310,14 @@ function App() {
             </div>
 
             {/* 上传图片控件 */}
+            {/**展示成品 */}
             {
-              !imageFile && <div className="flex flex-col items-center justify-end h-full box-border overflow-auto pb-[70px]">
+              !imageFile && <div className="flex flex-col items-center justify-between h-full box-border overflow-auto pb-[70px]">
+
+
+                <div className='mt-[20%]'>
+                  <MarqueeList />
+                </div>
                 <Label
                   htmlFor="file-upload"
                   className="cursor-pointer w-full max-w-[300px]"
