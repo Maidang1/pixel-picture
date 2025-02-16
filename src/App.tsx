@@ -1,10 +1,34 @@
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Download } from 'lucide-react'
 import { Switch } from "@/components/ui/switch"
+import { GridPattern } from "@/components/magicui/grid-pattern"
+import { ShinyButton } from "@/components/magicui/shiny-button"
 import ReactConfetti from 'react-confetti'
+import { cn } from "@/lib/utils";
+
 import './App.css'
+
+export function GridBackground(props: { children: React.ReactNode }) {
+  return (
+    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg border">
+      <GridPattern
+        width={30}
+        height={30}
+        x={-1}
+        y={-1}
+        strokeDasharray={"4 2"}
+        className={cn(
+          "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+        )}
+      />
+      {props.children}
+    </div>
+  );
+}
+
+
 
 function App() {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -189,196 +213,199 @@ function App() {
 
   if (isCompleted && imageFile) {
     return (
-      <div className="min-h-screen p-4 md:p-8 relative">
-        <ReactConfetti
-          width={windowSize.width}
-          height={windowSize.height}
-          recycle={false}
-          numberOfPieces={200}
-          gravity={0.2}
-        />
-        <div className="container max-w-2xl mx-auto space-y-6">
-          <div className="text-center space-y-4">
-            <h1 className="text-2xl font-bold">🎉 完成啦！</h1>
-            <p className="text-muted-foreground">
-              你的像素艺术已经准备就绪
-            </p>
-          </div>
+      <GridBackground>
+        <div className="min-h-screen p-4 md:p-8 relative">
+          <ReactConfetti
+            width={windowSize.width}
+            height={windowSize.height}
+            recycle={false}
+            numberOfPieces={200}
+            gravity={0.2}
+          />
+          <div className="container max-w-2xl mx-auto space-y-6">
+            <div className="text-center space-y-4">
+              <h1 className="text-2xl font-bold">🎉 完成啦！</h1>
+              <p className="text-muted-foreground">
+                你的像素艺术已经准备就绪
+              </p>
+            </div>
 
-          <div className="relative aspect-square w-full overflow-hidden rounded-lg">
-            <canvas
-              ref={canvasRef}
-              className="absolute inset-0 w-full h-full object-contain"
-            />
-          </div>
+            <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+              <canvas
+                ref={canvasRef}
+                className="absolute inset-0 w-full h-full object-contain"
+              />
+            </div>
 
-          <div className="flex justify-center gap-4">
-            <button
-              className="button button-ghost"
-              onClick={() => {
-                setIsCompleted(false);
-                handleReset();
-              }}
-            >
-              重新开始
-            </button>
-            <button
-              className="button button-primary flex items-center gap-2"
-              onClick={handleExportImage}
-            >
-              <Download className="w-4 h-4" />
-              保存图片
-            </button>
-          </div>
-          <div className='py-4 md:px-1 px-4 text-xs text-center text-black/30'>
-            <div className='text-center'>灵感来源于许嵩的《摄影艺术》的歌词</div>
-            <div className='text-center text-primary'>”数码时代用千万像素，制造出当我把你放大到底后，只剩马赛克的失意“</div>
-            <div className='text-center'>网站设计灵感来源于：<a href='https://poem.mayday.land' target='_blank' rel='noopener' className='text-primary underline'>Mayday 拼贴诗</a></div>
+            <div className="flex justify-center gap-4">
+              <button
+                className="button button-ghost"
+                onClick={() => {
+                  setIsCompleted(false);
+                  handleReset();
+                }}
+              >
+                重新开始
+              </button>
+              <button
+                className="button button-primary flex items-center gap-2"
+                onClick={handleExportImage}
+              >
+                <Download className="w-4 h-4" />
+                保存图片
+              </button>
+            </div>
+            <div className='py-4 md:px-1 px-4 text-xs text-center text-black/30'>
+              <div className='text-center'>灵感来源于许嵩的《摄影艺术》的歌词</div>
+              <div className='text-center text-primary'>”数码时代用千万像素，制造出当我把你放大到底后，只剩马赛克的失意“</div>
+              <div className='text-center'>网站设计灵感来源于：<a href='https://poem.mayday.land' target='_blank' rel='noopener' className='text-primary underline'>Mayday 拼贴诗</a></div>
+            </div>
           </div>
         </div>
-      </div>
+      </GridBackground>
     );
   }
 
   return (
-    <div className='flex flex-col h-full w-full max-w-full max-h-full box-border relative overflow-hidden justify-between'>
-      <div className="p-4 md:p-8 overflow-auto w-full max-w-full h-full max-h-full box-border relative">
-        <span className='md:rounded-full bg-gradient-to-t md:bg-gradient-to-r from-sky-400 to-teal-300 opacity-40 aspect-square blur-3xl absolute -z-10 w-[100%] md:w-full bottom-[calc(100%-120px)] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0'></span>
-        <div className="container max-w-2xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="text-l font-bold">Pixel Picture</div>
-          </div>
-
-          {
-            !imageFile && <div className="grid place-items-center">
-              <Label
-                htmlFor="file-upload"
-                className="cursor-pointer w-full max-w-[300px]"
-              >
-                <div className="flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg hover:border-primary transition-colors">
-                  <span className="text-sm text-muted-foreground">
-                    点击选择图片
-                  </span>
-                </div>
-                <input
-                  id="file-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  disabled={isLoading}
-                  aria-label="Upload image"
-                />
-              </Label>
+    <GridBackground>
+      <div className='flex flex-col h-full w-full max-w-full max-h-full box-border relative overflow-hidden justify-between'>
+        <div className="p-4 md:p-8 overflow-auto w-full max-w-full h-full max-h-full box-border relative">
+          <span className='md:rounded-full bg-gradient-to-t md:bg-gradient-to-r from-sky-400 to-teal-100 opacity-40 aspect-square blur-3xl absolute -z-10 w-[100%] md:w-full bottom-[calc(100%-200px)] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0'></span>
+          <div className="container max-w-2xl mx-auto space-y-6 h-full">
+            <div className="flex items-center justify-between">
+              <div className="text-2xl font-bold">Pixel Picture</div>
             </div>
-          }
 
-
-          {isLoading && (
-            <div className="flex items-center justify-center text-muted-foreground">
-              处理中...
-            </div>
-          )}
-
-          <div className="space-y-4">
-            {imageFile && !isLoading && (
-              <>
-                <div className="relative aspect-square w-full overflow-hidden rounded-lg">
-                  <canvas
-                    ref={canvasRef}
-                    className="absolute inset-0 w-full h-full object-contain"
+            {
+              !imageFile && <div className="flex flex-col items-center justify-center h-full">
+                <Label
+                  htmlFor="file-upload"
+                  className="cursor-pointer w-full max-w-[300px]"
+                >
+                  <div className="flex flex-col h-full items-center gap-2 p-6  rounded-lg hover:border-primary transition-colors">
+                    <ShinyButton className="text-sm text-muted-foreground">
+                      点击选择图片
+                    </ShinyButton>
+                  </div>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    disabled={isLoading}
+                    aria-label="Upload image"
                   />
-                </div>
-                <div className="px-4 space-y-6 pb-[50px]">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>R 通道权重 当前值: <span className='text-primary'>{weights.r.toFixed(3)}</span></Label>
-                      <Slider
-                        value={[weights.r]}
-                        onValueChange={(value) => handleWeightChange('r', value)}
-                        min={0}
-                        max={1}
-                        step={0.001}
-                        disabled={isLoading}
-                      />
-                    </div>
+                </Label>
+              </div>
+            }
 
-                    <div className="space-y-2">
-                      <Label>G 通道权重 当前值: <span className='text-primary'>{weights.g.toFixed(3)}</span></Label>
-                      <Slider
-                        value={[weights.g]}
-                        onValueChange={(value) => handleWeightChange('g', value)}
-                        min={0}
-                        max={1}
-                        step={0.001}
-                        disabled={isLoading}
-                      />
-                    </div>
 
-                    <div className="space-y-2">
-                      <Label>B 通道权重 当前值: <span className='text-primary'>{weights.b.toFixed(3)}</span></Label>
-                      <Slider
-                        value={[weights.b]}
-                        onValueChange={(value) => handleWeightChange('b', value)}
-                        min={0}
-                        max={1}
-                        step={0.001}
-                        disabled={isLoading}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>像素大小 当前值: <span className='text-primary'>{pixelSize}px</span></Label>
-                    <Slider
-                      value={[pixelSize]}
-                      onValueChange={(value) => setPixelSize(value[0])}
-                      min={1}
-                      max={10}
-                      step={1}
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>采样间隔 当前值: <span className='text-primary'>{sampleSize}px</span></Label>
-                    <Slider
-                      value={[sampleSize]}
-                      onValueChange={(value) => setSampleSize(value[0])}
-                      min={1}
-                      max={10}
-                      step={1}
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="color-mode">彩色模式</Label>
-                    <Switch
-                      id="color-mode"
-                      checked={isColorMode}
-                      onCheckedChange={setIsColorMode}
-                      disabled={isLoading}
-                    />
-                  </div>
-                </div>
-              </>
+            {isLoading && (
+              <div className="flex items-center justify-center text-muted-foreground">
+                处理中...
+              </div>
             )}
-          </div>
-        </div>
-      </div >
-      <div className='flex justify-between gap-2 px-4 md:px-0 py-2 mt-2 border-t border-gray-400/20'>
-        <button className='button button-ghost danger' onClick={handleReset}>重置</button>
-        <button
-          className='button button-ghost border-[#9ca3af80]'
-          onClick={handleComplete}
-          disabled={!imageFile || isLoading}
-        >
-          完成
-        </button>
-      </div>
-    </div>
 
+            <div className="space-y-4">
+              {imageFile && !isLoading && (
+                <>
+                  <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+                    <canvas
+                      ref={canvasRef}
+                      className="absolute inset-0 w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="px-4 space-y-6 pb-[50px]">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>R 通道权重 当前值: <span className='text-primary'>{weights.r.toFixed(3)}</span></Label>
+                        <Slider
+                          value={[weights.r]}
+                          onValueChange={(value) => handleWeightChange('r', value)}
+                          min={0}
+                          max={1}
+                          step={0.001}
+                          disabled={isLoading}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>G 通道权重 当前值: <span className='text-primary'>{weights.g.toFixed(3)}</span></Label>
+                        <Slider
+                          value={[weights.g]}
+                          onValueChange={(value) => handleWeightChange('g', value)}
+                          min={0}
+                          max={1}
+                          step={0.001}
+                          disabled={isLoading}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>B 通道权重 当前值: <span className='text-primary'>{weights.b.toFixed(3)}</span></Label>
+                        <Slider
+                          value={[weights.b]}
+                          onValueChange={(value) => handleWeightChange('b', value)}
+                          min={0}
+                          max={1}
+                          step={0.001}
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>像素大小 当前值: <span className='text-primary'>{pixelSize}px</span></Label>
+                      <Slider
+                        value={[pixelSize]}
+                        onValueChange={(value) => setPixelSize(value[0])}
+                        min={1}
+                        max={10}
+                        step={1}
+                        disabled={isLoading}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>采样间隔 当前值: <span className='text-primary'>{sampleSize}px</span></Label>
+                      <Slider
+                        value={[sampleSize]}
+                        onValueChange={(value) => setSampleSize(value[0])}
+                        min={1}
+                        max={10}
+                        step={1}
+                        disabled={isLoading}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="color-mode">彩色模式</Label>
+                      <Switch
+                        id="color-mode"
+                        checked={isColorMode}
+                        onCheckedChange={setIsColorMode}
+                        disabled={isLoading}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div >
+        <div className='flex justify-between gap-2 px-4 md:px-0 py-2 mt-2 border-t border-gray-400/20'>
+          <button className='button button-ghost danger' onClick={handleReset}>重置</button>
+          <button
+            className='button button-ghost border-[#9ca3af80]'
+            onClick={handleComplete}
+            disabled={!imageFile || isLoading}
+          >
+            完成
+          </button>
+        </div>
+      </div>
+    </GridBackground>
 
   )
 }
