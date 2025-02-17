@@ -255,9 +255,9 @@ function App() {
           />
           <div className="container max-w-2xl mx-auto space-y-6">
             <div className="text-center space-y-4">
-              <h1 className="text-2xl font-bold">🎉 完成啦！</h1>
+              <h1 className="text-2xl font-bold">🎉 Complete!</h1>
               <p className="text-muted-foreground">
-                你的像素艺术已经准备就绪
+                Your pixel art is ready
               </p>
             </div>
 
@@ -277,20 +277,20 @@ function App() {
                 }}
               >
                 <ChevronLeft className="w-4 h-4" />
-                返回
+                Back
               </button>
               <button
                 className="btn btn-normal flex items-center gap-2"
                 onClick={handleExportImage}
               >
                 <Download className="w-4 h-4" />
-                保存图片
+                Save Image
               </button>
             </div>
             <div className='py-4 md:px-1 px-4 text-xs text-center text-black/30'>
-              <div className='text-center'>灵感来源于许嵩的《摄影艺术》的歌词</div>
-              <div className='text-center text-primary'>”数码时代用千万像素，制造出当我把你放大到底后，只剩马赛克的失意“</div>
-              <div className='text-center'>网站设计灵感来源于：<a href='https://poem.mayday.land' target='_blank' rel='noopener' className='text-primary underline'>Mayday 拼贴诗</a></div>
+              <div className='text-center'>Inspired by the lyrics of 许嵩《摄影艺术》</div>
+              <div className='text-center text-primary'>"数码时代用千万像素，制造出当我把你放大到底后，只剩马赛克的失意"</div>
+              <div className='text-center'>Website design inspired by: <a href='https://poem.mayday.land' target='_blank' rel='noopener' className='text-primary underline'>Mayday Collage Poetry</a></div>
             </div>
           </div>
         </div>
@@ -331,7 +331,7 @@ function App() {
                       }}
                     >
                       <div className='flex items-center justify-center'>
-                        <span className='text-sm text-primary'>点击选择图片</span>
+                        <span className='text-sm text-primary'>Click to Select Image</span>
                       </div>
                     </ShinyButton>
                   </div>
@@ -351,7 +351,7 @@ function App() {
 
             {isLoading && (
               <div className="flex items-center justify-center text-muted-foreground">
-                处理中...
+                Processing...
               </div>
             )}
 
@@ -367,7 +367,7 @@ function App() {
                   <div className="px-4 space-y-6 pb-[50px]">
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label>R 通道权重 当前值: <span className='text-primary'>{weights.r.toFixed(3)}</span></Label>
+                        <Label>R Channel Weight Current: <span className='text-primary'>{weights.r.toFixed(3)}</span></Label>
                         <Slider
                           value={[weights.r]}
                           onValueChange={(value) => handleWeightChange('r', value)}
@@ -379,7 +379,7 @@ function App() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>G 通道权重 当前值: <span className='text-primary'>{weights.g.toFixed(3)}</span></Label>
+                        <Label>G Channel Weight Current: <span className='text-primary'>{weights.g.toFixed(3)}</span></Label>
                         <Slider
                           value={[weights.g]}
                           onValueChange={(value) => handleWeightChange('g', value)}
@@ -391,7 +391,7 @@ function App() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>B 通道权重 当前值: <span className='text-primary'>{weights.b.toFixed(3)}</span></Label>
+                        <Label>B Channel Weight Current: <span className='text-primary'>{weights.b.toFixed(3)}</span></Label>
                         <Slider
                           value={[weights.b]}
                           onValueChange={(value) => handleWeightChange('b', value)}
@@ -404,7 +404,7 @@ function App() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>像素大小 当前值: <span className='text-primary'>{pixelSize}px</span></Label>
+                      <Label>Pixel Size Current: <span className='text-primary'>{pixelSize}px</span></Label>
                       <Slider
                         value={[pixelSize]}
                         onValueChange={(value) => setPixelSize(value[0])}
@@ -416,7 +416,7 @@ function App() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>采样间隔 当前值: <span className='text-primary'>{sampleSize}px</span></Label>
+                      <Label>Sample Interval Current: <span className='text-primary'>{sampleSize}px</span></Label>
                       <Slider
                         value={[sampleSize]}
                         onValueChange={(value) => setSampleSize(value[0])}
@@ -428,7 +428,7 @@ function App() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="color-mode">彩色模式</Label>
+                      <Label htmlFor="color-mode">Color Mode</Label>
                       <Switch
                         id="color-mode"
                         checked={isColorMode}
@@ -442,14 +442,14 @@ function App() {
             </div>
           </div>
         </div >
-        <div className='flex justify-between gap-2 px-4 md:px-0 py-2 mt-2 border-t border-gray-400/20'>
-          <RippleButton className='btn btn-ghost danger' onClick={handleReset}>重置</RippleButton>
+        <div className='flex justify-between gap-2 px-4 py-2 mt-2 border-t border-gray-400/20'>
+          <RippleButton className='btn btn-ghost danger' onClick={handleReset}>Reset</RippleButton>
           <RippleButton
             className='btn btn-ghost border-[#9ca3af80]'
             onClick={handleComplete}
             disabled={!imageFile || isLoading}
           >
-            完成
+            Complete
           </RippleButton>
         </div>
       </div>
