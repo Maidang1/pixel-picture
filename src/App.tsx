@@ -7,6 +7,7 @@ import { GridPattern } from "@/components/magicui/grid-pattern"
 import { ShinyButton } from "@/components/magicui/shiny-button"
 import { RippleButton } from "@/components/magicui/ripple-button"
 import { Marquee } from "@/components/magicui/marquee";
+import { MorphingText } from "@/components/magicui/morphing-text"
 import ReactConfetti from 'react-confetti'
 import { cn } from "@/lib/utils";
 
@@ -317,6 +318,7 @@ function App() {
 
                 <div className='mt-[20%]'>
                   <MarqueeList />
+                  <MorphingText className='text-center mt-4 text-primary' texts={["Image","Pixel"]} />
                 </div>
                 <Label
                   htmlFor="file-upload"
