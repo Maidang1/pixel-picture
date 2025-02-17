@@ -48,7 +48,7 @@ const imagePath = [
 export function MarqueeList() {
   return (
     <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
-      <Marquee pauseOnHover className="[--duration:20s]">
+      <Marquee className="[--duration:20s]">
         {imagePath.map((item, index) => (
           <div key={index} className="w-full h-full">
             <img src={item} alt="pixel art" className="w-[250px] h-auto object-cover" />
