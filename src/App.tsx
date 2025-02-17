@@ -26,7 +26,7 @@ export function GridBackground(props: { children: React.ReactNode }) {
         height={30}
         x={-1}
         y={-1}
-        strokeDasharray={"4 2"}
+        strokeDasharray={"6 2"}
         className={cn(
           "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
         )}
@@ -442,7 +442,7 @@ function App() {
             </div>
           </div>
         </div >
-        <div className='flex justify-between gap-2 px-4 py-2 mt-2 border-t border-gray-400/20'>
+        <div className='flex justify-between gap-2 px-4 py-2 mt-2 border-t border-gray-400/20 bg-white'>
           <RippleButton className='btn btn-ghost danger' onClick={handleReset}>Reset</RippleButton>
           <RippleButton
             className='btn btn-ghost border-[#9ca3af80]'
